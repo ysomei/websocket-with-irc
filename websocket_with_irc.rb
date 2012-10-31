@@ -124,7 +124,7 @@ class WebSocket
           #puts "<#{sid}> #{msg}"
           @logs.push("<#{sid}> #{msg}")
           @channel.each do |k, v|
-            v.send("<#{sid}> #{msg}") if v.signature != sid
+            v.send("#{msg}") if v.signature != sid
           end
 
           @irc.send_msg("<#{sid}> #{msg}") if @irc.writable?

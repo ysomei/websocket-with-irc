@@ -17,7 +17,7 @@ socket.onmessage = function(event){
   showtimeline();
 };
 socket.onerror = function(event){
-  alert("error!");
+  alert("error! " + event);
 };
 socket.onclose = function(event){
   //alert("close websocket. " + event);
@@ -27,14 +27,17 @@ function sendmsg() {
   var nick = document.getElementById("nickname").value;
   var msg = document.getElementById("sendmsg").value;
   
+  if(msg == "") return false;
   if(nick == "") nick = "nana-shi";
-	var sendmsg = "(" + nick + ") " + msg;
+
+  var sendmsg = "(" + nick + ") " + msg;
   socket.send(sendmsg);
 
   var nowtime = createtime();
   msglog.push(nowtime + " " + sendmsg);
   if(msglog.length > MAX_SIZE) msglog.shift();
 
+  document.getElementById("sendmsg").value = "";
   showtimeline();
 }
 
@@ -52,3 +55,6 @@ function createtime() {
   return ("0" + now.getHours()).slice(-2) + ":" + ("0" + now.getMinutes()).slice(-2) + ":" + ("0" + now.getSeconds()).slice(-2);
 }
 
+function entercheck() {
+  if(event.keyCode == 13) sendmsg();
+}
