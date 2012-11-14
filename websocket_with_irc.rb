@@ -55,7 +55,8 @@ class IRCClient
 
           if @write_start
             unless obj.nil?
-              if msg.include?("PRIVMSG")
+              case msg[1]
+              when "PRIVMSG"
                 username = msg.shift.scan(/\~(.+)\@/).flatten[0]
                 command = msg.shift
                 channel = msg.shift
@@ -63,6 +64,25 @@ class IRCClient
                 obj.each do |k, v|
                   v.send("(#{username}) #{talk}") if v.signature != 2
                 end
+              when "JOIN"
+                username = msg.shift.scan(/\~(.+)\@/).flatten[0]
+                command = msg.shift
+                obj.each do |k, v|
+                  v.send("*#{username} join") if v.signature != 2
+                end
+              when "QUIT"
+                username = msg.shift.scan(/\~(.+)\@/).flatten[0]
+                command = msg.shift
+                talk = msg.join(" ").reverse.chop.reverse.force_encoding("UTF-8")
+                obj.each do |k, v|
+                  v.send("*#{username} quit #{talk}") if v.signature != 2
+                end
+              when "NOTICE"
+                servername = msg.shift
+                command = msg.shift
+                mastername = msg.shift
+                talk = msg.join(" ").reverse.chop.reverse.force_encoding("UTF-8")
+                puts "NOTICE: #{talk}"
               end
             end
           end
